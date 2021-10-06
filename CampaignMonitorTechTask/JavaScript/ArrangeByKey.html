@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ArrangeByKey</title>
+    </head>
+<body>
+<h2>Arranging JavaScript array of objects by its Key</h2>
+
+<p id="input"></p>
+<p id="output"></p>
+<script>
+const users = [
+	{
+		id: 1,
+		name: 'bob',
+    },
+	{
+		id: 2,
+		name: 'sally',
+	},
+	{
+		id: 3,
+		name: 'bob',
+		age: 30,
+	}];
+document.getElementById("input").innerHTML = JSON.stringify(users, null, 4);
+
+function groupByKey(key)
+{
+	const array = users.slice();
+    return array.reduce((hash, obj) => 
+    { 
+    	if(obj[key] === undefined) return hash; 
+     	return Object.assign(hash, 
+        { 
+        	[obj[key]]:( hash[obj[key]] || [] ).concat(obj)
+        })
+    }, {})
+}
+
+//const arrangeByKey = groupByKey('id');
+const arrangeByKey = groupByKey('name');
+//const arrangeByKey = groupByKey('age');
+//const arrangeByKey = groupByKey('dob');
+
+console.log(arrangeByKey);
+document.getElementById("output").innerHTML = JSON.stringify(arrangeByKey, null, 4);
+
+</script>
+
+</body>
+</html>
+

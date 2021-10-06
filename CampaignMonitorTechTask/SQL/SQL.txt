@@ -1,0 +1,45 @@
+Question 5A:
+select sp.Name
+from SalesPerson sp
+inner join Orders o on o.SalesPersonID = sp.SalesPersonID
+where o.CustomerID = (select CustomerID
+		      from Customer c
+		      where c.Name = 'George')
+
+Question 5B:
+select sp.Name
+from SalesPerson sp
+inner join Orders o on o.SalesPersonID = sp.SalesPersonID
+where o.CustomerID not in (select CustomerID
+			   from Customer c
+			   where c.Name = 'George')
+
+Question 5C:
+select sp.Name
+from SalesPerson sp
+inner join Orders o on o.SalesPersonID = sp.SalesPersonID
+Group by sp.Name
+having count (o.SalesPersonID) >= 2
+
+Question 6A:
+select Name, Salary
+from
+(
+	select Name, Salary, ROW_NUMBER() over(order by Salary desc) As RowNum
+	from SalesPerson
+) as DescendingSalaries
+where DescendingSalaries.RowNum = 3
+
+Question 6B:
+create table BigOrders (CustomerID int primary key, TotalOrderValue int)
+insert into BigOrders
+select coalesce (CustomerID, sum(CustomerID)), sum(NumberOfUnits * CostOfUnit) as TotalOrderValue
+from Orders
+group by rollup (CustomerID)
+having sum(NumberOfUnits * CostOfUnit) > 1000
+
+Question 6C:
+select Year(OrderDate) as 'Year', MONTH(OrderDate) as 'Month', sum(NumberOfUnits * CostOfUnit) as MonthTotalOrderValue
+from Orders
+group by Year(OrderDate), MONTH(OrderDate)
+order by Year(OrderDate), Month(OrderDate) desc
